@@ -7,6 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model UserAccount {
+  userId           String   @id @default(uuid())
+  email            String
+  password         String
+  createdTimestamp DateTime @default(now())
+  updatedTimestamp DateTime @default(now())
+
+  @@map("auth_credentials")
+}
+
+model User {
+  id              String     @id @default(uuid())
+  username        String
+  name            String
+  gender          UserGender
+  birthDate       DateTime
+  bio             String
+  updateTimestamp DateTime   @default(now())
+
+  @@map("users")
+}
+
+enum UserGender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model Moment {
   id                String                   @id @default(uuid())
   name              String
@@ -19,23 +47,24 @@ model Moment {
   locationPoint     Unsupported("geography")
   locationFakepoint Unsupported("geography")
   locationRadius    Decimal                  @db.Decimal
-  category   MomentCategory                  @relation(fields: [categoryId], references: [id])
+  category          MomentCategory           @relation(fields: [categoryId], references: [id])
   categoryId        String                   @db.Uuid
-  invites    MomentInvite[]
-  joins      MomentJoin[]
-  votes      MomentVote[]
+  invites           MomentInvite[]
+  joins             MomentJoin[]
+  votes             MomentVote[]
 
   @@index([locationPoint], map: "IDX_cb67109bf5b835b6c5550007b6")
   @@map("moments")
 }
 
 model MomentCategory {
-  id                    String            @id @default(uuid())
-  name                  String
-  moments               Moment[]
-  parent                MomentCategory?   @relation("CategorySubcategory", fields: [parentId], references: [id])
-  parentId              String?           @db.Uuid
-  children              MomentCategory[]  @relation("CategorySubcategory")
+  id       String           @id @default(uuid())
+  name     String
+  moments  Moment[]
+  parent   MomentCategory?  @relation("CategorySubcategory", fields: [parentId], references: [id])
+  parentId String?          @db.Uuid
+  children MomentCategory[] @relation("CategorySubcategory")
+
   @@map("moment_categories")
 }
 
@@ -44,6 +73,7 @@ model MomentInvite {
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
   userId   String @db.Uuid
+
   @@map("moment_invites")
 }
 
@@ -52,6 +82,7 @@ model MomentJoin {
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
   userId   String @db.Uuid
+
   @@map("moment_joins")
 }
 
@@ -61,5 +92,13 @@ model MomentVote {
   momentId String @db.Uuid
   userId   String @db.Uuid
   type     Int
+
   @@map("moment_votes")
+}
+
+model WaitlistEntry {
+  email   String @id @unique
+  name    String
+  city    String
+  country String
 }
