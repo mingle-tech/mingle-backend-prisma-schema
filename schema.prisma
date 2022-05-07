@@ -102,5 +102,5 @@ model WaitlistEntry {
   city    String
   country String
 
-  @@map("waitlist")
+  @@map("waitlist_entry")
 }
