@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Moment {
+  id                String                   @id @default(uuid())
+  name              String
+  description       String
+  hostId            String                   @db.Uuid
+  startTimestamp    DateTime
+  endTimestamp      DateTime
+  createdTimestamp  DateTime                 @default(now())
+  updatedTimestamp  DateTime                 @default(now())
+  locationPoint     Unsupported("geography")
+  locationFakepoint Unsupported("geography")
+  locationRadius    Decimal                  @db.Decimal
+  category   MomentCategory                  @relation(fields: [categoryId], references: [id])
+  categoryId        String                   @db.Uuid
+  invites    MomentInvite[]
+  joins      MomentJoin[]
+  votes      MomentVote[]
+
+  @@index([locationPoint], map: "IDX_cb67109bf5b835b6c5550007b6")
+  @@map("moments")
+}
+
+model MomentCategory {
+  id                    String            @id @default(uuid())
+  name                  String
+  moments               Moment[]
+  parent                MomentCategory?   @relation("CategorySubcategory", fields: [parentId], references: [id])
+  parentId              String?           @db.Uuid
+  children              MomentCategory[]  @relation("CategorySubcategory")
+  @@map("moment_categories")
+}
+
+model MomentInvite {
+  id       String @id @default(uuid())
+  moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  momentId String @db.Uuid
+  userId   String @db.Uuid
+  @@map("moment_invites")
+}
+
+model MomentJoin {
+  id       String @id @default(uuid())
+  moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  momentId String @db.Uuid
+  userId   String @db.Uuid
+  @@map("moment_joins")
+}
+
+model MomentVote {
+  id       String @id @default(uuid())
+  moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  momentId String @db.Uuid
+  userId   String @db.Uuid
+  type     Int
+  @@map("moment_votes")
+}
