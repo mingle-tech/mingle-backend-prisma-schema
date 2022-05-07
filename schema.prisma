@@ -8,7 +8,7 @@ datasource db {
 }
 
 model UserAccount {
-  userId           String   @id @default(uuid())
+  userId           String   @id @default(uuid()) @db.Uuid
   email            String
   password         String
   createdTimestamp DateTime @default(now())
@@ -18,7 +18,7 @@ model UserAccount {
 }
 
 model User {
-  id              String     @id @default(uuid())
+  id              String     @id @db.Uuid
   username        String
   name            String
   gender          UserGender
@@ -36,7 +36,7 @@ enum UserGender {
 }
 
 model Moment {
-  id                String                   @id @default(uuid())
+  id                String                   @id @default(uuid()) @db.Uuid
   name              String
   description       String
   hostId            String                   @db.Uuid
@@ -53,12 +53,12 @@ model Moment {
   joins             MomentJoin[]
   votes             MomentVote[]
 
-  @@index([locationPoint], map: "IDX_cb67109bf5b835b6c5550007b6")
+  @@index([locationPoint])
   @@map("moments")
 }
 
 model MomentCategory {
-  id       String           @id @default(uuid())
+  id       String           @id @default(uuid()) @db.Uuid
   name     String
   moments  Moment[]
   parent   MomentCategory?  @relation("CategorySubcategory", fields: [parentId], references: [id])
@@ -69,7 +69,7 @@ model MomentCategory {
 }
 
 model MomentInvite {
-  id       String @id @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
   userId   String @db.Uuid
@@ -78,7 +78,7 @@ model MomentInvite {
 }
 
 model MomentJoin {
-  id       String @id @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
   userId   String @db.Uuid
@@ -87,7 +87,7 @@ model MomentJoin {
 }
 
 model MomentVote {
-  id       String @id @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
   userId   String @db.Uuid
@@ -101,4 +101,6 @@ model WaitlistEntry {
   name    String
   city    String
   country String
+
+  @@map("waitlist")
 }
