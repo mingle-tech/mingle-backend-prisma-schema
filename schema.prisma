@@ -56,7 +56,7 @@ model Moment {
   updatedTimestamp  DateTime                 @default(now())
   locationPoint     Unsupported("geography")
   locationFakepoint Unsupported("geography")
-  locationRadius    Decimal                  @db.Decimal
+  locationRadius    Float
   category          MomentCategory           @relation(fields: [categoryId], references: [id])
   categoryId        String                   @db.Uuid
   invites           MomentInvite[]
