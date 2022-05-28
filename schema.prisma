@@ -31,10 +31,11 @@ model User {
   bio             String
   updateTimestamp DateTime   @default(now())
 
-  momentsJoined MomentJoin[]   @relation("UserJoin")
-  votes         MomentVote[]   @relation("UserVote")
-  invites       MomentInvite[] @relation("UserInvite")
-  momentsHosted Moment[]       @relation("MomentHost")
+  momentsJoined MomentJoin[]
+  votes         MomentVote[]
+  invites       MomentInvite[]
+  momentsHosted Moment[]
+  posts         Post[]
   @@map("users")
 }
 
@@ -48,7 +49,7 @@ model Moment {
   id                String                   @id @default(uuid()) @db.Uuid
   name              String
   description       String
-  host              User                     @relation("MomentHost", fields: [hostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  host              User                     @relation(fields: [hostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   hostId            String                   @db.Uuid
   startTimestamp    DateTime
   endTimestamp      DateTime
@@ -62,6 +63,7 @@ model Moment {
   invites           MomentInvite[]
   joins             MomentJoin[]
   votes             MomentVote[]
+  posts             Post[]
 
   @@index([locationPoint])
   @@map("moments")
@@ -82,7 +84,7 @@ model MomentInvite {
   id       String @id @default(uuid()) @db.Uuid
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
-  user     User   @relation("UserInvite", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId   String @db.Uuid
 
   @@map("moment_invites")
@@ -92,7 +94,7 @@ model MomentJoin {
   id       String @id @default(uuid()) @db.Uuid
   moment   Moment @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String @db.Uuid
-  user     User   @relation("UserJoin", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId   String @db.Uuid
 
   @@map("moment_joins")
@@ -102,7 +104,7 @@ model MomentVote {
   id       String         @id @default(uuid()) @db.Uuid
   moment   Moment         @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   momentId String         @db.Uuid
-  user     User           @relation("UserVote", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId   String         @db.Uuid
   type     MomentVoteType
 
@@ -121,4 +123,21 @@ model WaitlistEntry {
   country String
 
   @@map("waitlist_entry")
+}
+
+model Post {
+  id       String   @id @default(uuid()) @db.Uuid
+  type     PostType
+  author   User     @relation(fields: [authorId], references: [id])
+  authorId String   @db.Uuid
+  moment   Moment   @relation(fields: [momentId], references: [id])
+  momentId String   @db.Uuid
+
+  @@map("posts")
+}
+
+enum PostType {
+  MEDIA
+  MOMENT_CREATED
+  WILDCARD
 }
