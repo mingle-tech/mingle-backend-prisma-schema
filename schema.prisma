@@ -13,8 +13,8 @@ datasource db {
 }
 
 model UserAccount {
-  userId           String   @id @default(uuid()) @db.Uuid
-  email            String
+  userId           String   @default(uuid()) @db.Uuid
+  email            String   @id @unique
   password         String
   createdTimestamp DateTime @default(now())
   updatedTimestamp DateTime @default(now())
