@@ -14,9 +14,13 @@ datasource db {
 
 model UserAccount {
   userId           String   @id @default(uuid()) @db.Uuid
+  /// @HideField()
   email            String   @unique
+  /// @HideField()
   password         String
+  /// @HideField()
   createdTimestamp DateTime @default(now())
+  /// @HideField()
   updatedTimestamp DateTime @updatedAt
 
   @@map("auth_credentials")
@@ -31,8 +35,11 @@ model User {
   bio              String?
   updatedTimestamp DateTime   @updatedAt
 
-  momentsJoined MomentJoin[]
+  /// @HideField()
+  joins         MomentJoin[]
+  /// @HideField()
   votes         MomentVote[]
+  /// @HideField()
   invites       MomentInvite[]
   momentsHosted Moment[]
   posts         Post[]
@@ -52,15 +59,21 @@ model Moment {
   description       String
   host              User                     @relation(fields: [hostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   hostId            String                   @db.Uuid
+  /// @HideField()
   locationPoint     Unsupported("geography")
+  /// @HideField()
   locationFakepoint Unsupported("geography")
+  /// @HideField()
   locationRadius    Float
   category          MomentCategory           @relation(fields: [categoryId], references: [id])
   categoryId        String                   @db.Uuid
   startTimestamp    DateTime
   endTimestamp      DateTime
+  /// @HideField()
   invites           MomentInvite[]
+  /// @HideField()
   joins             MomentJoin[]
+  /// @HideField()
   votes             MomentVote[]
   posts             Post[]
   createdTimestamp  DateTime                 @default(now())
