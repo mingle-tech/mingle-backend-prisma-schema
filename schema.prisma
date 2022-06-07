@@ -12,6 +12,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// @Directive({ arguments: ['@key(fields: "userId")'] })
 model UserAccount {
   userId           String   @id @default(uuid()) @db.Uuid
   /// @HideField()
@@ -26,6 +27,7 @@ model UserAccount {
   @@map("auth_credentials")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model User {
   id               String     @id @db.Uuid
   username         String     @db.VarChar(30)
@@ -53,6 +55,7 @@ enum UserGender {
   OTHER
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model Moment {
   id                String                   @id @default(uuid()) @db.Uuid
   name              String                   @db.VarChar(30)
@@ -83,6 +86,7 @@ model Moment {
   @@map("moments")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model MomentCategory {
   id       String           @id @default(uuid()) @db.Uuid
   name     String           @db.VarChar(30)
@@ -94,6 +98,7 @@ model MomentCategory {
   @@map("moment_categories")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model MomentInvite {
   id        String   @id @default(uuid()) @db.Uuid
   moment    Moment   @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -105,6 +110,7 @@ model MomentInvite {
   @@map("moment_invites")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model MomentJoin {
   id        String   @id @default(uuid()) @db.Uuid
   moment    Moment   @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -116,6 +122,7 @@ model MomentJoin {
   @@map("moment_joins")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model MomentVote {
   id        String         @id @default(uuid()) @db.Uuid
   moment    Moment         @relation(fields: [momentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -133,6 +140,7 @@ enum MomentVoteType {
   LIKE
 }
 
+/// @Directive({ arguments: ['@key(fields: "email")'] })
 model WaitlistEntry {
   email     String   @id @unique
   name      String   @db.VarChar(30)
@@ -143,6 +151,7 @@ model WaitlistEntry {
   @@map("waitlist_entry")
 }
 
+/// @Directive({ arguments: ['@key(fields: "id")'] })
 model Post {
   id        String   @id @default(uuid()) @db.Uuid
   type      PostType
